@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +29,9 @@
         <a href="#passenger">Passenger</a>
         <a href="#comparison">What-if Analysis</a>
         <a href="#results">Prediction</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#ai-dashboard">AI Dashboard</a>
+        <a href="#model-performance">Model Performance</a>
 
         <div class="about-dropdown">
             <button type="button" class="about-button" aria-expanded="false">
@@ -69,7 +73,6 @@
         <div class="hero-caption">RMS TITANIC · AN INTERACTIVE MACHINE LEARNING EXPERIENCE</div>
     </div>
 
-    <!-- Decorative beach / ocean artwork -->
     <div class="beach-art" aria-hidden="true">
         <div class="sun"></div>
         <div class="bird bird-one">⌁</div>
@@ -366,7 +369,177 @@
         {% endif %}
     </section>
 
+
+    <!-- 04 · SURVIVAL ANALYTICS DASHBOARD -->
+
+    <section class="section-card dashboard-section" id="analytics">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">04 · HISTORICAL DATA INSIGHTS</span>
+                <h2>Survival Analytics Dashboard</h2>
+                <p>Explore historical survival patterns from the Titanic training dataset.</p>
+            </div>
+            <div class="heading-icon">◈</div>
+        </div>
+
+        {% if dashboard %}
+        <div class="analytics-grid">
+
+            <div class="analytics-card">
+                <h3>Survival by Gender</h3>
+                {% for item in dashboard.gender_data %}
+                <div class="analytics-item">
+                    <div class="analytics-label">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.rate }}%</strong>
+                    </div>
+                    <div class="analytics-track">
+                        <div class="analytics-fill" style="width: {{ item.rate }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="analytics-card">
+                <h3>Survival by Passenger Class</h3>
+                {% for item in dashboard.class_data %}
+                <div class="analytics-item">
+                    <div class="analytics-label">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.rate }}%</strong>
+                    </div>
+                    <div class="analytics-track">
+                        <div class="analytics-fill" style="width: {{ item.rate }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="analytics-card">
+                <h3>Survival by Age Group</h3>
+                {% for item in dashboard.age_data %}
+                <div class="analytics-item">
+                    <div class="analytics-label">
+                        <span>{{ item.label }}</span>
+                        <strong>{{ item.rate }}%</strong>
+                    </div>
+                    <div class="analytics-track">
+                        <div class="analytics-fill" style="width: {{ item.rate }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {% else %}
+        <p class="section-description">Historical dataset is not available.</p>
+        {% endif %}
+    </section>
+
+
+    <!-- 05 · AI DECISION DASHBOARD -->
+
+    <section class="section-card dashboard-section" id="ai-dashboard">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">05 · EXPLAINABLE ARTIFICIAL INTELLIGENCE</span>
+                <h2>AI Decision Dashboard</h2>
+                <p>Understand how passenger features influence the current prediction.</p>
+            </div>
+            <div class="heading-icon">✧</div>
+        </div>
+
+        {% if result and not result.error %}
+        <div class="analytics-card">
+            <h3>Feature Contribution Breakdown</h3>
+
+            {% for item in result.explanations %}
+            <div class="analytics-item">
+                <div class="analytics-label">
+                    <span>{{ item.feature }}</span>
+                    <strong class="{{ item.direction }}">
+                        {{ "%+.4f"|format(item.value) }}
+                    </strong>
+                </div>
+                <div class="analytics-track">
+                    <div class="analytics-fill {{ item.direction }}"
+                         style="width: {{ [((item.value|abs) * 100), 100]|min }}%">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <p class="shap-note">
+                SHAP values show each feature's contribution to the explained model output.
+                Positive and negative directions follow the model's SHAP output convention.
+            </p>
+        </div>
+        {% else %}
+        <div class="analytics-card">
+            <h3>Ready to Explain a Prediction</h3>
+            <p class="section-description">
+                Enter passenger details and calculate a prediction to view its feature contributions here.
+            </p>
+        </div>
+        {% endif %}
+    </section>
+
+
+    <!-- 06 · MODEL PERFORMANCE DASHBOARD -->
+
+    <section class="section-card dashboard-section" id="model-performance">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">06 · MODEL EVALUATION</span>
+                <h2>Model Performance Dashboard</h2>
+                <p>Technical overview of the trained CatBoost classifier.</p>
+            </div>
+            <div class="heading-icon">◎</div>
+        </div>
+
+        {% if performance %}
+        <div class="performance-grid">
+
+            <div class="performance-card">
+                <span class="performance-label">MODEL</span>
+                <h3>{{ performance.model_name }}</h3>
+                <p>{{ performance.model_type }}</p>
+            </div>
+
+            <div class="performance-card">
+                <span class="performance-label">INPUT FEATURES</span>
+                <strong class="performance-number">{{ performance.features }}</strong>
+                <p>Passenger attributes used by the model</p>
+            </div>
+
+            <div class="performance-card">
+                <span class="performance-label">CATEGORICAL FEATURES</span>
+                <strong class="performance-number">{{ performance.categorical_features }}</strong>
+                <p>Features handled as categorical inputs</p>
+            </div>
+
+        </div>
+
+        <div class="performance-note">
+            <span class="performance-icon">✦</span>
+            <div>
+                <h3>{{ performance.status }}</h3>
+                <p>
+                    The trained CatBoost model is loaded and used for passenger predictions.
+                    Accuracy, Precision, Recall and F1-score have not been calculated
+                    from a separate labeled validation dataset in this application.
+                </p>
+                <span class="metric-status">Evaluation metrics not configured yet</span>
+            </div>
+        </div>
+        {% else %}
+        <p class="section-description">Model performance information is unavailable.</p>
+        {% endif %}
+    </section>
+
+
     <!-- ABOUT / HOW IT WORKS -->
+
     <section class="info-section" id="about">
         <span class="section-kicker">ABOUT THE EXPERIENCE</span>
         <h2>A Story Explored Through Data</h2>
