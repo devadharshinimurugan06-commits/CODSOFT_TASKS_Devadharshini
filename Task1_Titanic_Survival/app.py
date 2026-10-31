@@ -89,9 +89,7 @@ def predict_passenger(X):
         explanations.append({
             "feature": feature,
             "value": round(float(value), 4),
-            "direction": (
-                "positive" if value >= 0 else "negative"
-            )
+            "direction": "positive" if value >= 0 else "negative"
         })
 
     explanations.sort(
@@ -163,6 +161,103 @@ def get_historical_insights():
 
 
 # ---------------------------------------
+# SURVIVAL ANALYTICS DASHBOARD
+# ---------------------------------------
+
+def get_survival_dashboard():
+    train_path = os.path.join(BASE_DIR, "train.csv")
+
+    if not os.path.exists(train_path):
+        return None
+
+    try:
+        df = pd.read_csv(train_path)
+
+        # Survival by age group
+        df["AgeGroup"] = pd.cut(
+            df["Age"],
+            bins=[0, 12, 18, 35, 60, 100],
+            labels=[
+                "Child",
+                "Teen",
+                "Young Adult",
+                "Adult",
+                "Senior"
+            ],
+            include_lowest=True
+        )
+
+        age_stats = (
+            df.dropna(subset=["AgeGroup"])
+            .groupby("AgeGroup", observed=False)["Survived"]
+            .mean()
+            .mul(100)
+            .round(1)
+        )
+
+        age_data = [
+            {"label": str(key), "rate": float(value)}
+            for key, value in age_stats.items()
+        ]
+
+        # Survival by gender
+        gender_stats = (
+            df.groupby("Sex")["Survived"]
+            .mean()
+            .mul(100)
+            .round(1)
+        )
+
+        gender_data = [
+            {"label": str(key).title(), "rate": float(value)}
+            for key, value in gender_stats.items()
+        ]
+
+        # Survival by passenger class
+        class_stats = (
+            df.groupby("Pclass")["Survived"]
+            .mean()
+            .mul(100)
+            .round(1)
+        )
+
+        class_data = [
+            {"label": f"Class {key}", "rate": float(value)}
+            for key, value in class_stats.items()
+        ]
+
+        return {
+            "age_data": age_data,
+            "gender_data": gender_data,
+            "class_data": class_data
+        }
+
+    except Exception as error:
+        print("Survival dashboard error:", error)
+        return None
+
+
+# ---------------------------------------
+# MODEL PERFORMANCE DASHBOARD
+# ---------------------------------------
+
+def get_model_performance():
+    try:
+        return {
+            "model_name": "CatBoost Classifier",
+            "model_type": "Machine Learning Classification",
+            "features": len(FEATURES),
+            "categorical_features": len(CAT_FEATURES),
+            "status": "Model Loaded Successfully",
+            "metrics_available": False
+        }
+
+    except Exception as error:
+        print("Model performance error:", error)
+        return None
+
+
+# ---------------------------------------
 # HOME PAGE
 # ---------------------------------------
 
@@ -174,6 +269,8 @@ def home():
     values = DEFAULT_VALUES.copy()
 
     historical = get_historical_insights()
+    dashboard = get_survival_dashboard()
+    performance = get_model_performance()
 
     if request.method == "POST":
 
@@ -198,7 +295,6 @@ def home():
                 }
 
                 X = prepare_passenger(request.form)
-
                 result = predict_passenger(X)
 
             # -----------------------------------
@@ -240,7 +336,9 @@ def home():
         result=result,
         values=values,
         comparison=comparison,
-        historical=historical
+        historical=historical,
+        dashboard=dashboard,
+        performance=performance
     )
 
 
