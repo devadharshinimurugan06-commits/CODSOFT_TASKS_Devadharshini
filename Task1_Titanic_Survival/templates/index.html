@@ -1,764 +1,414 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#061c35">
     <title>Beyond the Veils | Titanic Survival Intelligence</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
+<div class="ocean-background"></div>
+<div class="ocean-glow glow-one"></div>
+<div class="ocean-glow glow-two"></div>
 
-<div class="ocean-glow"></div>
+<!-- NAVIGATION -->
+<nav class="navbar">
+    <a href="#" class="brand">
+        <span class="brand-icon">✦</span>
+        TITANIC <span class="brand-light">INTELLIGENCE</span>
+    </a>
 
-<!-- HERO SECTION -->
-<header class="hero">
+    <div class="nav-links">
+        <a href="#passenger">Passenger</a>
+        <a href="#comparison">What-if Analysis</a>
+        <a href="#results">Prediction</a>
 
-    <div class="eyebrow">
-        ✦ THE ATLANTIC • 1912 • AI EXPERIENCE ✦
+        <div class="about-dropdown">
+            <button type="button" class="about-button" aria-expanded="false">
+                About the App <span>⌄</span>
+            </button>
+            <div class="dropdown-menu">
+                <a href="#about">About this project</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#technology">Technology</a>
+            </div>
+        </div>
     </div>
 
-    <h1>Beyond the <span>Veils.</span></h1>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+</nav>
 
-    <p class="hero-subtitle">
-        Discover the science behind survival.
-    </p>
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-content">
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            THE ATLANTIC · 1912 · EXPLAINABLE AI
+        </div>
 
-    <p class="hero-description">
-        Explore Titanic passenger survival probabilities
-        through machine learning and explainable AI.
-    </p>
+        <h1>Beyond the <span>Veils.</span></h1>
 
-    <div class="wave-line"></div>
+        <p class="hero-subtitle">A Journey Through Survival Intelligence</p>
 
+        <p class="hero-description">
+            Explore the science behind Titanic passenger survival.
+            Discover predictions powered by machine learning and explainable AI.
+        </p>
+
+        <div class="hero-actions">
+            <a href="#passenger" class="hero-button">Explore Prediction <span>→</span></a>
+            <a href="#about" class="hero-link">Discover the project ↓</a>
+        </div>
+
+        <div class="hero-caption">RMS TITANIC · AN INTERACTIVE MACHINE LEARNING EXPERIENCE</div>
+    </div>
+
+    <!-- Decorative beach / ocean artwork -->
+    <div class="beach-art" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="bird bird-one">⌁</div>
+        <div class="bird bird-two">⌁</div>
+        <div class="wave wave-back"></div>
+        <div class="wave wave-middle"></div>
+        <div class="wave wave-front"></div>
+        <div class="shore"></div>
+    </div>
 </header>
-
 
 <main class="main-container">
 
-    <!-- PASSENGER CALCULATOR -->
-    <section class="intro">
-
-        <div>
-            <span class="section-kicker">PASSENGER CALCULATOR</span>
-
-            <h2>Explore a passenger's journey</h2>
-
-            <p>
-                Enter passenger details to discover the model's
-                estimated survival probability.
-            </p>
+    <!-- SEARCH -->
+    <section class="search-section">
+        <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input type="search" id="appSearch"
+                   placeholder="Search the app... e.g. survival probability, SHAP, passenger class">
+            <span class="search-shortcut">SEARCH</span>
         </div>
-
-        <div class="shell-icon">🐚</div>
-
+        <div id="searchResults" class="search-results" hidden></div>
     </section>
 
-
-    <form method="POST" action="/" id="predictionForm">
-
-        <input type="hidden" name="action" value="predict">
-
-        <div class="form-grid">
-
-            <div class="field">
-                <label for="age">Age</label>
-
-                <input type="number"
-                       id="age"
-                       name="age"
-                       min="0"
-                       max="100"
-                       step="0.5"
-                       value="{{ values.age }}"
-                       required>
-
-                <small>Passenger age in years</small>
+    <!-- PASSENGER DETAILS -->
+    <section class="section-card" id="passenger">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">01 · PASSENGER CALCULATOR</span>
+                <h2>Explore a Passenger's Journey</h2>
+                <p>Enter passenger details to estimate their survival probability.</p>
             </div>
-
-
-            <div class="field">
-                <label for="sex">Gender</label>
-
-                <select id="sex" name="sex">
-                    <option value="female"
-                        {% if values.sex == 'female' %}selected{% endif %}>
-                        Female
-                    </option>
-
-                    <option value="male"
-                        {% if values.sex == 'male' %}selected{% endif %}>
-                        Male
-                    </option>
-                </select>
-
-                <small>Passenger gender</small>
-            </div>
-
-
-            <div class="field">
-                <label for="pclass">Passenger Class</label>
-
-                <select id="pclass" name="pclass">
-
-                    <option value="1"
-                        {% if values.pclass|string == '1' %}selected{% endif %}>
-                        1st Class
-                    </option>
-
-                    <option value="2"
-                        {% if values.pclass|string == '2' %}selected{% endif %}>
-                        2nd Class
-                    </option>
-
-                    <option value="3"
-                        {% if values.pclass|string == '3' %}selected{% endif %}>
-                        3rd Class
-                    </option>
-
-                </select>
-
-                <small>Ticket class</small>
-            </div>
-
-
-            <div class="field">
-                <label for="fare">Ticket Fare (£)</label>
-
-                <input type="number"
-                       id="fare"
-                       name="fare"
-                       min="0"
-                       max="600"
-                       step="0.01"
-                       value="{{ values.fare }}"
-                       required>
-
-                <small>Fare paid by passenger</small>
-            </div>
-
-
-            <div class="field">
-                <label for="sibsp">Siblings / Spouses</label>
-
-                <input type="number"
-                       id="sibsp"
-                       name="sibsp"
-                       min="0"
-                       max="10"
-                       step="1"
-                       value="{{ values.sibsp }}"
-                       required>
-
-                <small>Family members aboard</small>
-            </div>
-
-
-            <div class="field">
-                <label for="parch">Parents / Children</label>
-
-                <input type="number"
-                       id="parch"
-                       name="parch"
-                       min="0"
-                       max="10"
-                       step="1"
-                       value="{{ values.parch }}"
-                       required>
-
-                <small>Parents or children aboard</small>
-            </div>
-
-
-            <div class="field full-width">
-                <label for="embarked">Port of Embarkation</label>
-
-                <select id="embarked" name="embarked">
-
-                    <option value="S"
-                        {% if values.embarked == 'S' %}selected{% endif %}>
-                        Southampton
-                    </option>
-
-                    <option value="C"
-                        {% if values.embarked == 'C' %}selected{% endif %}>
-                        Cherbourg
-                    </option>
-
-                    <option value="Q"
-                        {% if values.embarked == 'Q' %}selected{% endif %}>
-                        Queenstown
-                    </option>
-
-                </select>
-
-                <small>Port where the passenger boarded</small>
-            </div>
-
+            <div class="heading-icon">⚓</div>
         </div>
 
+        <form method="POST" action="/" id="predictionForm">
+            <input type="hidden" name="action" value="predict">
 
-        <button class="predict-button" type="submit">
-            <span>🐚</span>
-            Calculate Survival Chances
-            <span>→</span>
-        </button>
+            <div class="form-grid">
+                <div class="field">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" min="0" max="100"
+                           step="0.5" value="{{ values.age }}" required>
+                    <small>Passenger age in years</small>
+                </div>
 
-    </form>
+                <div class="field">
+                    <label for="sex">Gender</label>
+                    <select id="sex" name="sex">
+                        <option value="female" {% if values.sex == 'female' %}selected{% endif %}>Female</option>
+                        <option value="male" {% if values.sex == 'male' %}selected{% endif %}>Male</option>
+                    </select>
+                    <small>Passenger gender</small>
+                </div>
 
+                <div class="field">
+                    <label for="pclass">Passenger Class</label>
+                    <select id="pclass" name="pclass">
+                        <option value="1" {% if values.pclass|string == '1' %}selected{% endif %}>1st Class</option>
+                        <option value="2" {% if values.pclass|string == '2' %}selected{% endif %}>2nd Class</option>
+                        <option value="3" {% if values.pclass|string == '3' %}selected{% endif %}>3rd Class</option>
+                    </select>
+                    <small>Ticket class</small>
+                </div>
 
-    <!-- ERROR MESSAGE -->
+                <div class="field">
+                    <label for="fare">Ticket Fare (£)</label>
+                    <input type="number" id="fare" name="fare" min="0" max="600"
+                           step="0.01" value="{{ values.fare }}" required>
+                    <small>Fare paid by passenger</small>
+                </div>
+
+                <div class="field">
+                    <label for="sibsp">Siblings / Spouses</label>
+                    <input type="number" id="sibsp" name="sibsp" min="0" max="10"
+                           value="{{ values.sibsp }}" required>
+                    <small>Family members aboard</small>
+                </div>
+
+                <div class="field">
+                    <label for="parch">Parents / Children</label>
+                    <input type="number" id="parch" name="parch" min="0" max="10"
+                           value="{{ values.parch }}" required>
+                    <small>Parents or children aboard</small>
+                </div>
+
+                <div class="field full-width">
+                    <label for="embarked">Port of Embarkation</label>
+                    <select id="embarked" name="embarked">
+                        <option value="S" {% if values.embarked == 'S' %}selected{% endif %}>Southampton</option>
+                        <option value="C" {% if values.embarked == 'C' %}selected{% endif %}>Cherbourg</option>
+                        <option value="Q" {% if values.embarked == 'Q' %}selected{% endif %}>Queenstown</option>
+                    </select>
+                    <small>Port where the passenger boarded</small>
+                </div>
+            </div>
+
+            <button class="primary-button" type="submit">
+                <span>✦</span> Calculate Survival Chances <span>→</span>
+            </button>
+        </form>
+    </section>
+
     {% if result and result.error %}
-
-        <div class="error-card">
-            <strong>Something went wrong</strong>
-            <p>{{ result.error }}</p>
-        </div>
-
+    <div class="error-card">
+        <strong>Something went wrong</strong>
+        <p>{{ result.error }}</p>
+    </div>
     {% endif %}
 
-
-    <!-- SURVIVAL PREDICTION -->
+    <!-- PREDICTION RESULT -->
     {% if result and not result.error %}
-
-    <section class="result-section" id="results">
-
-        <div class="section-kicker">
-            YOUR MODEL RESULT
+    <section class="section-card result-section" id="results">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">03 · YOUR MODEL RESULT</span>
+                <h2>{{ result.prediction }}</h2>
+                <p>This is a machine learning estimate based on the entered passenger details.</p>
+            </div>
+            <div class="heading-icon">✧</div>
         </div>
 
-        <h2>{{ result.prediction }}</h2>
-
-        <p class="result-note">
-            This is a machine learning estimate,
-            not a historical confirmation.
-        </p>
-
-
-        <!-- CIRCULAR SURVIVAL GAUGE -->
-        <div class="probability-card">
-
-            <div class="probability-heading">
-                <span>Survival Probability</span>
-                <strong>{{ result.survival }}%</strong>
-            </div>
-
-            <div class="gauge-container">
-
+        <div class="result-layout">
+            <div class="gauge-panel">
                 <div class="survival-gauge"
                      style="--gauge-value: {{ result.survival }}%;">
-
                     <div class="gauge-inner">
-
                         <strong>{{ result.survival }}%</strong>
-
                         <span>SURVIVAL</span>
-
                     </div>
-
                 </div>
-
-                <div class="gauge-description">
-
-                    <h3>Survival Chances</h3>
-
-                    <p>
-                        The model estimates the probability
-                        of survival using the entered details.
-                    </p>
-
-                    <div class="probability-row">
-                        <span>
-                            Survival: {{ result.survival }}%
-                        </span>
-
-                        <span>
-                            Not Survival: {{ result.not_survival }}%
-                        </span>
-                    </div>
-
-                </div>
-
+                <h3>Survival Probability</h3>
+                <p>Estimated by your trained CatBoost model.</p>
             </div>
 
+            <div class="result-details">
+                <div class="probability-stat survival-stat">
+                    <span>Survival Probability</span>
+                    <strong>{{ result.survival }}%</strong>
+                </div>
+                <div class="probability-stat death-stat">
+                    <span>Not Survival Probability</span>
+                    <strong>{{ result.not_survival }}%</strong>
+                </div>
+
+                <div class="result-disclaimer">
+                    These are model-generated probabilities, not historical confirmation.
+                </div>
+            </div>
         </div>
 
-
-        <!-- EXPLAINABLE AI -->
+        <!-- SHAP EXPLANATION -->
         <div class="explain-card">
-
-            <div class="section-kicker">
-                EXPLAINABLE AI • CATBOOST SHAP
-            </div>
-
-            <h3>What influenced this prediction?</h3>
-
-            <p class="explain-intro">
-                These are the three features with the largest
-                absolute SHAP values for this prediction.
+            <span class="section-kicker">EXPLAINABLE AI · CATBOOST SHAP</span>
+            <h3>What Influenced This Prediction?</h3>
+            <p class="section-description">
+                The three features with the largest absolute SHAP values for this prediction.
             </p>
 
-
             {% for item in result.top_explanations %}
-
-                <div class="shap-row">
-
-                    <div class="shap-label">
-
-                        <span>{{ item.feature }}</span>
-
-                        <strong class="{{ item.direction }}">
-                            {{ "%+.4f"|format(item.value) }}
-                        </strong>
-
-                    </div>
-
-                    <div class="shap-track">
-
-                        <div class="shap-bar {{ item.direction }}"
-                             style="width: {{ [((item.value|abs) * 100), 100]|min }}%">
-                        </div>
-
-                    </div>
-
+            <div class="shap-row">
+                <div class="shap-label">
+                    <span>{{ item.feature }}</span>
+                    <strong class="{{ item.direction }}">
+                        {{ "%+.4f"|format(item.value) }}
+                    </strong>
                 </div>
-
+                <div class="shap-track">
+                    <div class="shap-bar {{ item.direction }}"
+                         style="width: {{ [((item.value|abs) * 100), 100]|min }}%">
+                    </div>
+                </div>
+            </div>
             {% endfor %}
 
             <p class="shap-note">
-                SHAP values explain the model output.
-                Their direction depends on the model's
-                explained output and class convention.
+                SHAP values explain the model output. Their direction depends on the explained output and class convention.
             </p>
-
         </div>
 
-
-        <!-- EXPLORE ANOTHER POSSIBILITY -->
-        <div class="what-if-card">
-
-            <span class="shell-icon">🐚</span>
-
-            <div>
-
-                <h3>Explore Another Possibility</h3>
-
-                <p>
-                    Change the passenger details above
-                    and calculate again to explore another prediction.
-                </p>
-
-            </div>
-
-            <button type="button"
-                    class="secondary-button"
-                    onclick="editScenario()">
-
-                Change Details ↗
-
-            </button>
-
-        </div>
-
+        <button type="button" class="outline-button" onclick="editScenario()">
+            ↻ Explore Another Passenger
+        </button>
     </section>
-
     {% endif %}
 
-
-    <!-- WHAT-IF SCENARIO COMPARISON -->
-    <section class="comparison-section" id="comparison">
-
-        <div class="section-kicker">
-            WHAT-IF ANALYSIS
+    <!-- WHAT-IF ANALYSIS -->
+    <section class="section-card" id="comparison">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">02 · WHAT-IF ANALYSIS</span>
+                <h2>Compare Passenger Scenarios</h2>
+                <p>Change passenger details and compare two model-generated survival estimates.</p>
+            </div>
+            <div class="heading-icon">⇄</div>
         </div>
-
-        <h2>Compare Passenger Scenarios</h2>
-
-        <p class="explain-intro">
-            Explore how different passenger details
-            affect the model's survival estimates.
-        </p>
-
 
         <form method="POST" action="/" id="comparisonForm">
-
             <input type="hidden" name="action" value="compare">
 
-
             <div class="comparison-grid">
-
-                <!-- SCENARIO A -->
-                <div class="scenario-card">
-
-                    <h3>Scenario A</h3>
-
-                    <p>First hypothetical passenger</p>
-
+                {% for scenario, title, description, age, sex, pclass, fare, sibsp, parch in [
+                    ('a', 'Scenario A', 'First hypothetical passenger', 25, 'female', '3', 20, 0, 0),
+                    ('b', 'Scenario B', 'Second hypothetical passenger', 40, 'male', '3', 10, 1, 0)
+                ] %}
+                <div class="scenario-card scenario-{{ scenario }}">
+                    <div class="scenario-heading">
+                        <span class="scenario-number">0{{ loop.index }}</span>
+                        <div>
+                            <h3>{{ title }}</h3>
+                            <p>{{ description }}</p>
+                        </div>
+                    </div>
 
                     <div class="field">
                         <label>Age</label>
-
-                        <input type="number"
-                               name="scenario_a_age"
-                               min="0"
-                               max="100"
-                               step="0.5"
-                               value="25"
-                               required>
+                        <input type="number" name="scenario_{{ scenario }}_age"
+                               min="0" max="100" step="0.5" value="{{ age }}" required>
                     </div>
-
 
                     <div class="field">
                         <label>Gender</label>
-
-                        <select name="scenario_a_sex">
-                            <option value="female">Female</option>
-                            <option value="male">Male</option>
+                        <select name="scenario_{{ scenario }}_sex">
+                            <option value="female" {% if sex == 'female' %}selected{% endif %}>Female</option>
+                            <option value="male" {% if sex == 'male' %}selected{% endif %}>Male</option>
                         </select>
                     </div>
 
-
                     <div class="field">
                         <label>Passenger Class</label>
-
-                        <select name="scenario_a_pclass">
+                        <select name="scenario_{{ scenario }}_pclass">
                             <option value="1">1st Class</option>
                             <option value="2">2nd Class</option>
                             <option value="3" selected>3rd Class</option>
                         </select>
                     </div>
 
-
                     <div class="field">
                         <label>Ticket Fare (£)</label>
-
-                        <input type="number"
-                               name="scenario_a_fare"
-                               min="0"
-                               max="600"
-                               step="0.01"
-                               value="20"
-                               required>
+                        <input type="number" name="scenario_{{ scenario }}_fare"
+                               min="0" max="600" step="0.01" value="{{ fare }}" required>
                     </div>
-
 
                     <div class="field">
                         <label>Siblings / Spouses</label>
-
-                        <input type="number"
-                               name="scenario_a_sibsp"
-                               min="0"
-                               max="10"
-                               value="0"
-                               required>
+                        <input type="number" name="scenario_{{ scenario }}_sibsp"
+                               min="0" max="10" value="{{ sibsp }}" required>
                     </div>
-
 
                     <div class="field">
                         <label>Parents / Children</label>
-
-                        <input type="number"
-                               name="scenario_a_parch"
-                               min="0"
-                               max="10"
-                               value="0"
-                               required>
+                        <input type="number" name="scenario_{{ scenario }}_parch"
+                               min="0" max="10" value="{{ parch }}" required>
                     </div>
 
-
                     <div class="field">
-                        <label>Embarkation</label>
-
-                        <select name="scenario_a_embarked">
-                            <option value="S" selected>Southampton</option>
+                        <label>Port of Embarkation</label>
+                        <select name="scenario_{{ scenario }}_embarked">
+                            <option value="S">Southampton</option>
                             <option value="C">Cherbourg</option>
                             <option value="Q">Queenstown</option>
                         </select>
                     </div>
-
                 </div>
-
-
-                <!-- SCENARIO B -->
-                <div class="scenario-card">
-
-                    <h3>Scenario B</h3>
-
-                    <p>Second hypothetical passenger</p>
-
-
-                    <div class="field">
-                        <label>Age</label>
-
-                        <input type="number"
-                               name="scenario_b_age"
-                               min="0"
-                               max="100"
-                               step="0.5"
-                               value="40"
-                               required>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Gender</label>
-
-                        <select name="scenario_b_sex">
-                            <option value="female">Female</option>
-                            <option value="male" selected>Male</option>
-                        </select>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Passenger Class</label>
-
-                        <select name="scenario_b_pclass">
-                            <option value="1">1st Class</option>
-                            <option value="2">2nd Class</option>
-                            <option value="3" selected>3rd Class</option>
-                        </select>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Ticket Fare (£)</label>
-
-                        <input type="number"
-                               name="scenario_b_fare"
-                               min="0"
-                               max="600"
-                               step="0.01"
-                               value="10"
-                               required>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Siblings / Spouses</label>
-
-                        <input type="number"
-                               name="scenario_b_sibsp"
-                               min="0"
-                               max="10"
-                               value="1"
-                               required>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Parents / Children</label>
-
-                        <input type="number"
-                               name="scenario_b_parch"
-                               min="0"
-                               max="10"
-                               value="0"
-                               required>
-                    </div>
-
-
-                    <div class="field">
-                        <label>Embarkation</label>
-
-                        <select name="scenario_b_embarked">
-                            <option value="S" selected>Southampton</option>
-                            <option value="C">Cherbourg</option>
-                            <option value="Q">Queenstown</option>
-                        </select>
-                    </div>
-
-                </div>
-
+                {% endfor %}
             </div>
 
-
-            <button class="predict-button" type="submit">
-                Compare Survival Chances →
+            <button class="primary-button" type="submit">
+                ⇄ Compare Survival Chances <span>→</span>
             </button>
-
         </form>
 
-
-        <!-- COMPARISON RESULTS -->
         {% if comparison %}
-
         <div class="comparison-results" id="comparisonResults">
-
-            <h3>Scenario Comparison Results</h3>
+            <span class="section-kicker">COMPARISON OUTPUT</span>
+            <h3>Scenario Results</h3>
 
             <div class="comparison-grid">
-
+                {% for key, title in [('scenario_a', 'Scenario A'), ('scenario_b', 'Scenario B')] %}
                 <div class="comparison-result-card">
-
-                    <span class="section-kicker">
-                        SCENARIO A
-                    </span>
-
-                    <h3>{{ comparison.scenario_a.prediction }}</h3>
-
-                    <div class="comparison-percentage">
-                        {{ comparison.scenario_a.survival }}%
-                    </div>
-
-                    <p>Estimated Survival Probability</p>
-
+                    <span class="section-kicker">{{ title }}</span>
+                    <h3>{{ comparison[key].prediction }}</h3>
+                    <div class="comparison-percentage">{{ comparison[key].survival }}%</div>
+                    <p>Estimated survival probability</p>
                     <div class="progress-track">
                         <div class="progress-fill"
-                             style="width: {{ comparison.scenario_a.survival }}%">
-                        </div>
+                             style="width: {{ comparison[key].survival }}%"></div>
                     </div>
-
                 </div>
-
-
-                <div class="comparison-result-card">
-
-                    <span class="section-kicker">
-                        SCENARIO B
-                    </span>
-
-                    <h3>{{ comparison.scenario_b.prediction }}</h3>
-
-                    <div class="comparison-percentage">
-                        {{ comparison.scenario_b.survival }}%
-                    </div>
-
-                    <p>Estimated Survival Probability</p>
-
-                    <div class="progress-track">
-                        <div class="progress-fill"
-                             style="width: {{ comparison.scenario_b.survival }}%">
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <p class="result-note">
-                These are model estimates for two hypothetical
-                passenger profiles, not historical facts.
-            </p>
-
-        </div>
-
-        {% endif %}
-
-    </section>
-
-
-    <!-- HISTORICAL INSIGHTS -->
-    {% if historical %}
-
-    <section class="historical-section">
-
-        <div class="section-kicker">
-            HISTORICAL DATA INSIGHTS
-        </div>
-
-        <h2>Titanic Through the Numbers</h2>
-
-        <p class="explain-intro">
-            Historical statistics calculated from the Titanic
-            training dataset used in this project.
-        </p>
-
-
-        <div class="stats-grid">
-
-            <div class="stat-card">
-                <span>Total Passengers</span>
-                <strong>{{ historical.total }}</strong>
-            </div>
-
-            <div class="stat-card">
-                <span>Survived</span>
-                <strong>{{ historical.survived }}</strong>
-            </div>
-
-            <div class="stat-card">
-                <span>Did Not Survive</span>
-                <strong>{{ historical.not_survived }}</strong>
-            </div>
-
-            <div class="stat-card">
-                <span>Overall Survival Rate</span>
-                <strong>{{ historical.survival_rate }}%</strong>
-            </div>
-
-        </div>
-
-
-        <div class="historical-details">
-
-            <div class="stat-card">
-
-                <h3>Survival by Gender</h3>
-
-                <p>
-                    Female:
-                    <strong>{{ historical.female_rate }}%</strong>
-                </p>
-
-                <p>
-                    Male:
-                    <strong>{{ historical.male_rate }}%</strong>
-                </p>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <h3>Survival by Passenger Class</h3>
-
-                {% for class_number, rate in historical.class_rates.items() %}
-
-                    <p>
-                        {{ class_number }}{% if class_number == 1 %}st{% elif class_number == 2 %}nd{% else %}rd{% endif %} Class:
-                        <strong>{{ rate }}%</strong>
-                    </p>
-
                 {% endfor %}
-
             </div>
-
+            <p class="shap-note">These are estimates for two hypothetical passenger profiles.</p>
         </div>
-
-        <p class="shap-note">
-            These figures describe the training dataset.
-            They are not predictions for an individual passenger.
-        </p>
-
+        {% endif %}
     </section>
 
-    {% endif %}
+    <!-- ABOUT / HOW IT WORKS -->
+    <section class="info-section" id="about">
+        <span class="section-kicker">ABOUT THE EXPERIENCE</span>
+        <h2>A Story Explored Through Data</h2>
+        <p>
+            Beyond the Veils is an interactive Titanic survival prediction project.
+            It uses passenger information and a trained machine learning model
+            to estimate survival probability.
+        </p>
 
+        <div class="info-grid">
+            <article class="info-card" id="how-it-works">
+                <span class="info-icon">⌕</span>
+                <h3>How It Works</h3>
+                <p>Enter passenger details, submit the form, and receive a model-generated survival estimate.</p>
+            </article>
 
-    <!-- FOOTER -->
+            <article class="info-card" id="technology">
+                <span class="info-icon">✧</span>
+                <h3>Technology</h3>
+                <p>CatBoost, Flask, Python and SHAP explainability power this application.</p>
+            </article>
+
+            <article class="info-card">
+                <span class="info-icon">◉</span>
+                <h3>What-if Analysis</h3>
+                <p>Compare two hypothetical passenger profiles using the same trained model.</p>
+            </article>
+        </div>
+    </section>
+
     <footer>
-
+        <div class="footer-brand">BEYOND THE VEILS.</div>
         <p>Inspired by the story of the RMS Titanic</p>
-
-        <span>
-            Built with CatBoost · Flask · Explainable AI
-        </span>
-
+        <span>Built with CatBoost · Flask · Explainable AI</span>
         <p class="disclaimer">
             Educational demonstration using historical Titanic data.
             Predictions are estimates, not facts about individual passengers.
         </p>
-
     </footer>
 
 </main>
 
-
 <script src="{{ url_for('static', filename='static/script.js') }}"></script>
-
 </body>
 </html>
