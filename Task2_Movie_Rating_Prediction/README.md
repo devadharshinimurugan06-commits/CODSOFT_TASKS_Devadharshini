@@ -1,100 +1,214 @@
-# 🎬 Task 2: Movie Rating Prediction with Python
+# Movie Rating Prediction with Python
 
-**CodSoft Data Science Internship** · #codsoft
+**CodSoft Data Science Internship – Task 2**  
+**Developed by:** Devadharshini M
 
-## 📌 Objective
-Build a regression model that predicts the rating of a movie from features such as **genre, director and actors**, and find out which factors influence movie ratings the most.
+## Project Overview
 
-## 📂 Dataset
-`IMDb Movies India.csv`: IMDb data on Indian movies.
+Movie Rating Prediction is a Machine Learning regression project that predicts movie ratings using historical movie information.
 
-- Total records: **15,509 movies**
-- Movies with a rating (used for modeling): **7,919**
-- Columns: Name, Year, Duration, Genre, Rating, Votes, Director, Actor 1, Actor 2, Actor 3
-- Target variable: **Rating**
+The project analyzes different factors that may influence movie ratings, including genre, director, actors, release year, movie duration, and number of votes.
 
-## 🛠️ Project Workflow
+The main objective is to perform data analysis, preprocessing, feature engineering, and regression modeling to estimate movie ratings based on historical IMDb data.
 
-### 1. Data Exploration
-- Viewed the data with `head()`, `tail()`, `info()` and `describe()`
-- Missing values: Duration (53.3%), Rating (48.9%), Votes (48.9%), Actor 3 (20.3%), Actor 2 (15.4%), Genre (12.1%), Actor 1 (10.4%), Year (3.4%), Director (3.4%)
-- Duplicates: 6 exact duplicate rows found and removed
+## Dataset
+
+**Dataset Name:** IMDb Movies India.csv
+
+The dataset contains information about Indian movies, including:
+
+- Movie Name
+- Year
+- Duration
+- Genre
+- Rating
+- Votes
+- Director
+- Actor 1
+- Actor 2
+- Actor 3
+
+**Original Dataset Size:**
+- 15,509 rows
+- 10 columns
+
+**After Data Cleaning:**
+- 7,919 rows
+- 10 columns
+
+The target variable is `Rating`.
+
+## Project Workflow
+
+### 1. Data Loading and Exploration
+
+- Loaded the IMDb Movies India dataset using Pandas.
+- Used Latin-1 encoding to read the dataset.
+- Examined the first and last records.
+- Checked dataset dimensions and column information.
+- Generated descriptive statistical summaries.
+- Identified missing values and their percentages.
+- Checked duplicate records and duplicate movie names.
 
 ### 2. Data Cleaning and Preprocessing
-- Dropped rows with no rating (the target) or no year
-- Converted `Year` (e.g. "(2019)"), `Duration` (e.g. "109 min") and `Votes` to numbers
-- Filled missing `Duration` and `Votes` with the median
-- Filled missing `Genre`, `Director` and actors with "Unknown"
-- Final clean data: **7,919 rows, 0 missing values, 0 duplicates**
 
-### 3. Data Visualization (5 plots)
-1. Distribution of movie ratings
-2. Average rating by decade
-3. Top genres by count and by average rating
-4. Top directors by average rating
-5. Correlation heatmap and Votes vs Rating scatter plot
+- Removed 6 exact duplicate records.
+- Removed records with missing movie ratings.
+- Removed records with missing release years.
+- Extracted numerical values from Year and Duration columns.
+- Converted Votes into numerical format by removing commas.
+- Handled missing Duration and Votes using median imputation.
+- Replaced missing Genre, Director, and Actor information with `Unknown`.
+- Converted Year into integer format.
+- Verified that the cleaned dataset contained no remaining missing values or exact duplicate rows.
+
+**Final Cleaned Dataset:** 7,919 rows × 10 columns.
+
+### 3. Exploratory Data Analysis
+
+Performed exploratory data analysis to understand movie rating patterns.
+
+Created visualizations for:
+
+- Distribution of movie ratings.
+- Average movie ratings by decade.
+- Top 10 genres based on movie counts.
+- Top-rated genres with at least 30 movies.
+- Top 10 directors by average rating with at least 5 movies.
+- Correlation heatmap for Year, Duration, Votes, and Rating.
+- Relationship between movie votes and ratings.
 
 ### 4. Feature Engineering
-- **Genre:** multi-hot encoding (19 genre columns)
-- **Director and actors:** smoothed target encoding (the average rating of the person's other movies), computed on training data only to avoid data leakage
-- **Votes:** log transformation
-- Final feature set: **28 features**
-- 80/20 train-test split: **6,335 training rows, 1,584 test rows**
 
-### 5. Model Building
-Three regression models were trained and compared:
-- Linear Regression
-- Random Forest Regressor (200 trees)
-- Gradient Boosting Regressor (200 trees)
+Applied feature engineering techniques to convert movie information into numerical features.
 
-### 6. Evaluation
-Metrics used: **MAE, RMSE, R2 Score**
+- Performed multi-hot encoding on Genre.
+- Retained genre categories appearing at least 50 times.
+- Generated 19 genre feature columns.
+- Applied logarithmic transformation to Votes using `log1p`.
+- Applied smoothed target encoding to Director.
+- Applied target encoding to Actor 1, Actor 2, and Actor 3.
+- Generated aggregate actor features:
+  - `Actor_Enc_Mean`
+  - `Actor_Enc_Max`
 
-## 📊 Results
+Used an 80:20 train-test split with `random_state=42`.
 
-| Model | MAE | RMSE | R2 Score |
-|---|---|---|---|
-| **Gradient Boosting (best)** | **0.785** | **1.034** | **0.425** |
+**Dataset Split:**
+- Training records: 6,335
+- Testing records: 1,584
+
+### 5. Machine Learning Models
+
+Implemented and compared three regression algorithms:
+
+1. Linear Regression
+2. Random Forest Regressor
+3. Gradient Boosting Regressor
+
+### 6. Model Evaluation
+
+Evaluated the regression models using:
+
+- Mean Absolute Error (MAE)
+- Root Mean Squared Error (RMSE)
+- R-squared (R²)
+
+Also performed:
+
+- Random Forest feature importance visualization.
+- Actual vs Predicted rating comparison.
+- Sample movie rating predictions.
+- Absolute prediction error analysis.
+
+## Model Performance
+
+The following results were obtained from the test dataset:
+
+| Model | MAE | RMSE | R² |
+|---|---:|---:|---:|
+| Gradient Boosting | 0.785 | 1.034 | 0.425 |
 | Random Forest | 0.794 | 1.045 | 0.412 |
 | Linear Regression | 0.848 | 1.103 | 0.345 |
 
-**Without the Votes feature** (a pre-release scenario), Random Forest scored MAE 0.857, RMSE 1.117 and R2 0.328.
+**Best Performing Model: Gradient Boosting Regressor**
 
-The best model's R2 of 0.425 means it explains about 42.5% of the variation in movie ratings, and its predictions are off by about 0.8 rating points on average.
+Gradient Boosting achieved:
 
-### Sample predictions (test set, Gradient Boosting)
+- MAE: 0.785
+- RMSE: 1.034
+- R²: 0.425
 
-| Movie | Actual | Predicted |
-|---|---|---|
-| Veerappan | 5.3 | 5.4 |
-| Commando 3 | 5.7 | 5.1 |
-| Fashion | 6.9 | 6.4 |
-| Firaaq | 7.4 | 6.8 |
-| Main Suhagan Hoon | 5.2 | 5.8 |
+It achieved the lowest MAE and RMSE and the highest R² among the three evaluated models.
 
-## 🔍 Key Insights
-- The most influential factors are the **actors' past average ratings**, **number of votes**, **release year** and the **director's track record**.
-- **Genre** has the smallest effect on the rating.
-- Tree-based models beat Linear Regression because ratings depend on combinations of features, not a straight line.
-- The model tends to predict toward the middle (5 to 7) and is weaker on very high or very low rated movies.
+### 7. Additional Experiment – Without Votes
 
-## ⚠️ Limitations
-- Ratings are subjective and depend on things not in the data (story, music, marketing, budget).
-- `Votes` is only known after a movie is released.
-- Many movies had missing duration or actor information.
+An additional experiment was performed using Random Forest without the `Log_Votes` feature.
 
-## 🚀 Future Improvements
-- Add budget, box office and cast popularity data
-- Add text features from plots or reviews
-- Try XGBoost / LightGBM and hyperparameter tuning
+This experiment helps examine model performance when vote-count information is excluded.
 
-## 🧰 Tools and Libraries
-Python · Pandas · NumPy · Matplotlib · Seaborn · Scikit-learn · Google Colab
+| Metric | Random Forest Without Votes |
+|---|---:|
+| MAE | 0.857 |
+| RMSE | 1.117 |
+| R² | 0.328 |
 
-## 📁 Files
-- `Task2_Movie_Prediction_Devadharshini.ipynb`: complete project notebook
-- `IMDb Movies India.csv`: dataset
+The model achieved an R² of 0.328 without Votes, compared with 0.412 for the main Random Forest model.
 
-## 👩‍💻 Author
-**Devadharshini M**
-CodSoft Data Science Internship
+### 8. Prediction and Visualization
+
+- Generated predicted movie ratings using the trained Gradient Boosting model.
+- Compared actual and predicted ratings.
+- Calculated absolute prediction errors.
+- Displayed sample movie predictions with actual ratings and predicted ratings.
+- Visualized Random Forest feature importance to understand influential features.
+
+## Technologies Used
+
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- Google Colab / Jupyter Notebook
+
+## Project Structure
+
+```text
+Task2_Movie_Rating_Prediction/
+│
+├── README.md
+├── Task2_Movie_Prediction_Devadharshini.ipynb
+└── IMDb Movies India.csv
+```
+
+## How to Run the Project
+
+1. Clone or download the GitHub repository.
+2. Open the Movie Rating Prediction notebook in Google Colab or Jupyter Notebook.
+3. Ensure `IMDb Movies India.csv` is available at the dataset path specified in the notebook.
+4. Install the required libraries if necessary:
+
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn
+```
+
+5. Execute the notebook cells sequentially to perform data cleaning, exploratory analysis, feature engineering, model training, evaluation, and prediction.
+
+## Limitations
+
+- Movie ratings are subjective and can depend on factors not included in the dataset.
+- The model's performance depends on the quality and availability of historical movie information.
+- Votes may not be available before a movie is released.
+- The experiment without Votes provides an additional comparison, but it does not represent a complete evaluation of every possible pre-release prediction scenario.
+
+## Conclusion
+
+This project demonstrates an end-to-end Machine Learning regression workflow using the IMDb Movies India dataset.
+
+The dataset was cleaned and analyzed, and features were engineered using genre, director, actors, year, duration, and votes.
+
+Three regression algorithms were implemented and evaluated. Gradient Boosting achieved the best performance with an MAE of 0.785, RMSE of 1.034, and R² of 0.425.
+
+The project provided practical experience in data preprocessing, exploratory data analysis, feature engineering, regression modeling, performance evaluation, and movie rating prediction.
