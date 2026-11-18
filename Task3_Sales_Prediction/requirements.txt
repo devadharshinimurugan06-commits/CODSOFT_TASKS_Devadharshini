@@ -1,8 +1,6 @@
-equirements · TXT
 streamlit>=1.50
 pandas
 numpy
 plotly
 joblib
 scikit-learn==1.6.1
- 
