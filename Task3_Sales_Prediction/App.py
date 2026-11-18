@@ -429,4 +429,4 @@ with tab_about:
         unsafe_allow_html=True,
     )
 
-st.caption("Built for the CodSoft Data Science Internship")
+st.caption("Built by Devadharshini")
